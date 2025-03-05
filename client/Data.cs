@@ -2,18 +2,15 @@
 
 using System.Text.Json;
 
-namespace LibData
-{
+namespace LibData {
 
-    public class Message
-    {
+    public class Message {
         public int MsgId { get; set; }
         public MessageType MsgType { get; set; }
         public Object? Content { get; set; }
     }
 
-    public enum MessageType
-    {
+    public enum MessageType {
         Hello,
         Welcome,
         DNSLookup,
@@ -24,8 +21,7 @@ namespace LibData
         Error
     }
 
-    public class DNSRecord
-    {
+    public class DNSRecord {
         public string Type { get; set; }
         public string Name { get; set; }
         public string? Value { get; set; }

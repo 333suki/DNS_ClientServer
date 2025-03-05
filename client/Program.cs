@@ -10,24 +10,20 @@ using System.Text.Json.Serialization;
 using LibData;
 
 // SendTo();
-class Program
-{
-    static void Main(string[] args)
-    {
+class Program {
+    static void Main(string[] args) {
         ClientUDP.start();
     }
 }
 
-public class Setting
-{
+public class Setting {
     public int ServerPortNumber { get; set; }
     public string? ServerIPAddress { get; set; }
     public int ClientPortNumber { get; set; }
     public string? ClientIPAddress { get; set; }
 }
 
-class ClientUDP
-{
+class ClientUDP {
 
     //TODO: [Deserialize Setting.json]
     static string configFile = @"../Setting.json";
@@ -35,8 +31,7 @@ class ClientUDP
     static Setting? setting = JsonSerializer.Deserialize<Setting>(configContent);
 
 
-    public static void start()
-    {
+    public static void start() {
 
         //TODO: [Create endpoints and socket]
 

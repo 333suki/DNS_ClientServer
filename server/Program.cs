@@ -11,16 +11,13 @@ using System.Text.Json;
 using LibData;
 
 // ReceiveFrom();
-class Program
-{
-    static void Main(string[] args)
-    {
+class Program {
+    static void Main(string[] args) {
         ServerUDP.start();
     }
 }
 
-public class Setting
-{
+public class Setting {
     public int ServerPortNumber { get; set; }
     public string? ServerIPAddress { get; set; }
     public int ClientPortNumber { get; set; }
@@ -28,8 +25,7 @@ public class Setting
 }
 
 
-class ServerUDP
-{
+class ServerUDP {
     static string configFile = @"../Setting.json";
     static string configContent = File.ReadAllText(configFile);
     static Setting? setting = JsonSerializer.Deserialize<Setting>(configContent);
@@ -39,8 +35,7 @@ class ServerUDP
 
 
 
-    public static void start()
-    {
+    public static void start() {
 
 
         // TODO: [Create a socket and endpoints and bind it to the server IP address and port number]
