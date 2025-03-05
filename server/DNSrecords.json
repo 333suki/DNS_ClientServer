@@ -1,0 +1,52 @@
+[
+  {
+    "Type": "A",
+    "Name": "www.outlook.com",
+    "Value": "192.168.1.10",
+    "TTL": 3600
+  },
+  {
+    "Type": "A",
+    "Name": "www.test.com",
+    "Value": "192.168.1.20",
+    "TTL": 3600
+  },
+  {
+    "Type": "A",
+    "Name": "www.sample.com",
+    "Value": "192.168.1.30",
+    "TTL": 3600
+  },
+  {
+    "Type": "A",
+    "Name": "www.mywebsite.com", 
+    "Value": "192.168.1.40",
+    "TTL": 3600
+  },
+  {
+    "Type": "A",
+    "Name": "www.customdomain.com",
+    "Value": "192.168.1.50",
+    "TTL": 3600
+  },
+  {
+    "Type": "MX",
+    "Name": "example.com",
+    "Value": "mail.example.com",
+    "Priority": 10,
+    "TTL": 3600
+  },
+  {
+    "Type": "MX",
+    "Name": "example.com",
+    "Value": "mail.example.com",
+    "Priority": 10,
+    "TTL": 3600
+  },
+  {
+    "Type": "A",
+    "Name": "mail.example.com",
+    "Value": "192.168.2.1",
+    "TTL": 3600
+  }
+]
