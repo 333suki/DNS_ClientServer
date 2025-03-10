@@ -36,6 +36,28 @@ class ServerUDP {
 
 
     public static void start() {
+        int port = 9000; // Port to listen on
+
+        // Create a UDP socket
+        Socket serverSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
+
+        // Bind to any available IP on the specified port
+        IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Any, port);
+        serverSocket.Bind(serverEndPoint);
+
+        Console.WriteLine($"Server is listening on port {port}...");
+
+        // Buffer to receive data
+        byte[] buffer = new byte[1024];
+        EndPoint remoteEndPoint = new IPEndPoint(IPAddress.Any, 0);
+
+        while (true) {
+            // Receive data from client
+            int receivedBytes = serverSocket.ReceiveFrom(buffer, ref remoteEndPoint);
+            string receivedMessage = Encoding.UTF8.GetString(buffer, 0, receivedBytes);
+
+            Console.WriteLine($"Received: {receivedMessage} from {remoteEndPoint}");
+        }
 
 
         // TODO: [Create a socket and endpoints and bind it to the server IP address and port number]
@@ -72,6 +94,4 @@ class ServerUDP {
         // TODO:[If no further requests receieved send End to the client]
 
     }
-
-
 }
