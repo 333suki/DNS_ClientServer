@@ -33,29 +33,48 @@ class ClientUDP {
 
     public static void start() {
 
-        //TODO: [Create endpoints and socket]
 
+        string serverIp = "145.137.58.204"; // Replace with your friend's IP
+        int serverPort = 9000; // Must match server port
 
-        //TODO: [Create and send HELLO]
+        // Create a UDP socket
+        Socket clientSocket = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
 
-        //TODO: [Receive and print Welcome from server]
+        // Define server endpoint
+        IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse(serverIp), serverPort);
 
-        // TODO: [Create and send DNSLookup Message]
+        string message = "MIAUW!";
+        byte[] sendBytes = Encoding.UTF8.GetBytes(message);
 
+        // Send message to server
+        clientSocket.SendTo(sendBytes, serverEndPoint);
+        Console.WriteLine($"Sent: {message} to {serverIp}:{serverPort}");
 
-        //TODO: [Receive and print DNSLookupReply from server]
-
-
-        //TODO: [Send Acknowledgment to Server]
-
-        // TODO: [Send next DNSLookup to server]
-        // repeat the process until all DNSLoopkups (correct and incorrect onces) are sent to server and the replies with DNSLookupReply
-
-        //TODO: [Receive and print End from server]
-
-
-
-
-
+        clientSocket.Close();
     }
+
+    //TODO: [Create endpoints and socket]
+
+
+    //TODO: [Create and send HELLO]
+
+    //TODO: [Receive and print Welcome from server]
+
+    // TODO: [Create and send DNSLookup Message]
+
+
+    //TODO: [Receive and print DNSLookupReply from server]
+
+
+    //TODO: [Send Acknowledgment to Server]
+
+    // TODO: [Send next DNSLookup to server]
+    // repeat the process until all DNSLoopkups (correct and incorrect onces) are sent to server and the replies with DNSLookupReply
+
+    //TODO: [Receive and print End from server]
+
+
+
+
+
 }

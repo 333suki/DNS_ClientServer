@@ -25,7 +25,8 @@ public class Setting {
 }
 
 
-class ServerUDP {
+class ServerUDP
+{
     static string configFile = @"../Setting.json";
     static string configContent = File.ReadAllText(configFile);
     static Setting? setting = JsonSerializer.Deserialize<Setting>(configContent);
@@ -35,7 +36,8 @@ class ServerUDP {
 
 
 
-    public static void start() {
+    public static void start()
+    {
 
 
         // TODO: [Create a socket and endpoints and bind it to the server IP address and port number]
@@ -72,6 +74,4 @@ class ServerUDP {
         // TODO:[If no further requests receieved send End to the client]
 
     }
-
-
 }
