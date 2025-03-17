@@ -25,9 +25,8 @@ public class Setting {
 }
 
 static class ServerUDP {
-    static string configFile = @"Setting.json";
-    static string configContent = File.ReadAllText(configFile);
-    static Setting? setting = JsonSerializer.Deserialize<Setting>(configContent);
+    static Setting? setting = JsonSerializer.Deserialize<Setting>(File.ReadAllText("Setting.json"));
+    static List<DNSRecord>? records = JsonSerializer.Deserialize<List<DNSRecord>>(File.ReadAllText("DNSrecords.json"));
     private static Socket serverSocket;
 
     // TODO: [Read the JSON file and return the list of DNSRecords]
@@ -45,13 +44,23 @@ static class ServerUDP {
         
         // TODO:[Receive and print Hello]
         Message helloMessage = ReceiveMessageFromClient(clientEndPoint);
-        Console.WriteLine(helloMessage.Content);
+        Console.WriteLine($"Received message: {helloMessage.MsgId}, {helloMessage.MsgType}, {helloMessage.Content}");
 
         // TODO:[Send Welcome to the client]
+        SendMessageToClient(new Message{MsgId = 4, MsgType = MessageType.Welcome, Content = "Welcome from server!!!"}, clientEndPoint);
 
         // TODO:[Receive and print DNSLookup]
+        Message dnsLookUpMessage = ReceiveMessageFromClient(clientEndPoint);
+        Console.WriteLine($"Received message: {dnsLookUpMessage.MsgId}, {dnsLookUpMessage.MsgType}, {dnsLookUpMessage.Content}");
 
         // TODO:[Query the DNSRecord in Json file]
+        foreach (DNSRecord record in records) {
+            Console.WriteLine($"Checking {record.Type}, {record.Name}, {record.Value}, {record.TTL}, {record?.Priority}");
+            if (String.Compare(record.Name, dnsLookUpMessage.Content as string, StringComparison.OrdinalIgnoreCase) == 0) {
+                Console.WriteLine("Found!");
+                Console.WriteLine($"{record.Type}, {record.Name}, {record.Value}, {record.TTL}, {record?.Priority}");
+            }
+        }
 
         // TODO:[If found Send DNSLookupReply containing the DNSRecord]
 
@@ -70,6 +79,7 @@ static class ServerUDP {
             byte[] messageBytes = Encoding.UTF8.GetBytes(jsonMessage);
             // Send the bytes to the client
             serverSocket.SendTo(messageBytes, clientEndPoint);
+            Console.WriteLine($"Sent message: {message.MsgId}, {message.MsgType}, {message.Content}");
         } catch (Exception ex) {
             Console.WriteLine($"Error sending message: {ex.Message}");
         }
