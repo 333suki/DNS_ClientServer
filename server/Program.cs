@@ -55,8 +55,7 @@ static class ServerUDP {
 
         // TODO:[Query the DNSRecord in Json file]
         foreach (DNSRecord record in records) {
-            Console.WriteLine($"Checking {record.Type}, {record.Name}, {record.Value}, {record.TTL}, {record?.Priority}");
-            if (String.Compare(record.Name, dnsLookUpMessage.Content as string, StringComparison.OrdinalIgnoreCase) == 0) {
+            if (String.Compare(record.Name.Trim(), dnsLookUpMessage.Content.ToString().Trim(), StringComparison.OrdinalIgnoreCase) == 0) {
                 Console.WriteLine("Found!");
                 Console.WriteLine($"{record.Type}, {record.Name}, {record.Value}, {record.TTL}, {record?.Priority}");
             }
@@ -68,7 +67,7 @@ static class ServerUDP {
 
         // TODO:[Receive Ack about correct DNSLookupReply from the client]
 
-        // TODO:[If no further requests receieved send End to the client]
+        // TODO:[If no further requests received send End to the client]
     }
 
     private static void SendMessageToClient(Message message, EndPoint clientEndPoint) {
