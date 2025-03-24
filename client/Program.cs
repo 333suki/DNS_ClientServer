@@ -44,20 +44,35 @@ static class ClientUDP {
 
         //TODO: [Receive and print Welcome from server]
         Message welcomeMessage = ReceiveMessageFromServer(serverEndPoint);
-        Console.WriteLine($"Received message: {welcomeMessage.MsgId}, {welcomeMessage.MsgType}, {welcomeMessage.Content}");
+        Console.WriteLine($"Received message: {welcomeMessage}");
 
         // TODO: [Create and send DNSLookup Message]
-        SendMessageToServer(new Message { MsgId = 33, MsgType = MessageType.DNSLookup, Content = "www.outlook.com" }, serverEndPoint);
+        //string[] records = { "example.com"};
 
-        //TODO: [Receive and print DNSLookupReply from server]
+        string[] records = { "www.customdomain.com", "example.com", "www.funny_cat.com", "https://visdeurbel.nl/" };
+        for (int i = 0; i < records.Length; i++)
+        {
+            SendMessageToServer(new Message { MsgId = 33+i, MsgType = MessageType.DNSLookup, Content = records[i] }, serverEndPoint);
+            Message DNSLookupReply = ReceiveMessageFromServer(serverEndPoint);
+            Console.WriteLine(DNSLookupReply);
+
+            if (DNSLookupReply is not null)
+            {
+                SendMessageToServer(new Message { MsgId = 4112, MsgType = MessageType.Ack, Content = DNSLookupReply.MsgId }, serverEndPoint);
+            }
+        }
 
 
-        //TODO: [Send Acknowledgment to Server]
+        //TODO: [Receive and print DNSLookupReply from server] DONE
+        //TODO: [Send Acknowledgment to Server] DONE
+
 
         // TODO: [Send next DNSLookup to server]
         // repeat the process until all DNSLoopkups (correct and incorrect onces) are sent to server and the replies with DNSLookupReply
 
-        //TODO: [Receive and print End from server]
+
+        //TODO: [Send End message to  server]
+        SendMessageToServer(new Message { MsgId = 91377, MsgType = MessageType.End, Content = "No Lookups anymore" }, serverEndPoint);
     }
 
 
