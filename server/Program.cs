@@ -44,30 +44,39 @@ static class ServerUDP {
         
         // TODO:[Receive and print Hello]
         Message helloMessage = ReceiveMessageFromClient(clientEndPoint);
-        Console.WriteLine($"Received message: {helloMessage.MsgId}, {helloMessage.MsgType}, {helloMessage.Content}");
+        Console.WriteLine($"Received message: {helloMessage}");
 
         // TODO:[Send Welcome to the client]
         SendMessageToClient(new Message{MsgId = 4, MsgType = MessageType.Welcome, Content = "Welcome from server!!!"}, clientEndPoint);
+        
+        while (true) {
+            // TODO:[Receive and print DNSLookup]
+            Message dnsLookUpMessage = ReceiveMessageFromClient(clientEndPoint);
+            Console.WriteLine($"Received lookup message: {dnsLookUpMessage}");
+            
+            if (dnsLookUpMessage.MsgType == MessageType.DNSLookup) {
+                // TODO:[Query the DNSRecord in Json file]
+                bool found = false;
+                foreach (DNSRecord record in records) {
+                    if (String.Compare(record.Name.Trim(), dnsLookUpMessage.Content.ToString().Trim(), StringComparison.OrdinalIgnoreCase) == 0) {
+                        // TODO:[If found Send DNSLookupReply containing the DNSRecord]
+                        found = true;
+                        SendMessageToClient(new Message { MsgId = dnsLookUpMessage.MsgId, MsgType = MessageType.DNSLookupReply, Content = new DNSRecord { Type = record.Type, Name = record.Name, Value = record.Value, TTL = record.TTL, Priority = record.Priority } }, clientEndPoint);
+                        break;
+                    }
+                }
 
-        // TODO:[Receive and print DNSLookup]
-        Message dnsLookUpMessage = ReceiveMessageFromClient(clientEndPoint);
-        Console.WriteLine($"Received message: {dnsLookUpMessage.MsgId}, {dnsLookUpMessage.MsgType}, {dnsLookUpMessage.Content}");
+                // TODO:[If not found Send Error]
+                if (!found) {
+                    SendMessageToClient(new Message { MsgId = 753444, MsgType = MessageType.Error, Content = "Domain not found" }, clientEndPoint);
+                }
 
-        // TODO:[Query the DNSRecord in Json file]
-        foreach (DNSRecord record in records) {
-            if (String.Compare(record.Name.Trim(), dnsLookUpMessage.Content.ToString().Trim(), StringComparison.OrdinalIgnoreCase) == 0) {
-                Console.WriteLine("Found!");
-                Console.WriteLine($"{record.Type}, {record.Name}, {record.Value}, {record.TTL}, {record?.Priority}");
+                // TODO:[Receive Ack about correct DNSLookupReply from the client]
+                Message ackMessage = ReceiveMessageFromClient(clientEndPoint);
+                Console.WriteLine($"Received ack message: {ackMessage}");
             }
         }
-
-        // TODO:[If found Send DNSLookupReply containing the DNSRecord]
-
-        // TODO:[If not found Send Error]
-
-        // TODO:[Receive Ack about correct DNSLookupReply from the client]
-
-        // TODO:[If no further requests received send End to the client]
+        // TODO:[If end is received from client, stop connection]
     }
 
     private static void SendMessageToClient(Message message, EndPoint clientEndPoint) {
@@ -78,9 +87,11 @@ static class ServerUDP {
             byte[] messageBytes = Encoding.UTF8.GetBytes(jsonMessage);
             // Send the bytes to the client
             serverSocket.SendTo(messageBytes, clientEndPoint);
-            Console.WriteLine($"Sent message: {message.MsgId}, {message.MsgType}, {message.Content}");
+            Console.WriteLine($"Sent message: {message}");
+            Console.WriteLine();
         } catch (Exception ex) {
             Console.WriteLine($"Error sending message: {ex.Message}");
+            Console.WriteLine();
         }
     }
 

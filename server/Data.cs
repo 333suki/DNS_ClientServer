@@ -11,8 +11,7 @@ namespace LibData {
         public MessageType MsgType { get; set; }
         public Object? Content { get; set; }
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return $"MsgId: {MsgId}, MsgType: {MsgType}, Content: {Content}";
         }
     }
@@ -35,8 +34,7 @@ namespace LibData {
         public int? TTL { get; set; }
         public int? Priority { get; set; } // Nullable for non-MX records
 
-        public override string ToString()
-        {
+        public override string ToString() {
             return $"Type: {Type}, Name: {Name}, Value: {Value}, TTL: {TTL}, Priority: {Priority}";
         }
     }
