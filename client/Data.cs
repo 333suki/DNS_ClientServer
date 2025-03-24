@@ -8,6 +8,10 @@ namespace LibData {
         public int MsgId { get; set; }
         public MessageType MsgType { get; set; }
         public Object? Content { get; set; }
+
+        public override string ToString() {
+            return $"MsgId: {MsgId}, MsgType: {MsgType}, Content: {Content}";
+        }
     }
 
     public enum MessageType {
@@ -27,5 +31,9 @@ namespace LibData {
         public string? Value { get; set; }
         public int? TTL { get; set; }
         public int? Priority { get; set; } // Nullable for non-MX records
+
+        public override string ToString() {
+            return $"Type: {Type}, Name: {Name}, Value: {Value}, TTL: {TTL}, Priority: {Priority}";
+        }
     }
 }
