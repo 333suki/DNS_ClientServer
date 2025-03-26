@@ -38,6 +38,7 @@ static class ServerUDP {
         IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse(setting.ServerIPAddress), setting.ServerPortNumber);
         serverSocket.Bind(serverEndPoint);
         Console.WriteLine($"Server is listening on {setting.ServerIPAddress}:{setting.ServerPortNumber}");
+        Console.WriteLine();
 
         // TODO:[Receive and print a received Message from the client]
         EndPoint clientEndPoint = new IPEndPoint(IPAddress.Parse(setting.ClientIPAddress), setting.ClientPortNumber);
