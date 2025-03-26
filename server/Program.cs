@@ -44,7 +44,6 @@ static class ServerUDP {
         
         // TODO:[Receive and print Hello]
         Message helloMessage = ReceiveMessageFromClient(clientEndPoint);
-        Console.WriteLine($"Received message: {helloMessage}");
 
         // TODO:[Send Welcome to the client]
         SendMessageToClient(new Message{MsgId = 4, MsgType = MessageType.Welcome, Content = "Welcome from server!!!"}, clientEndPoint);
@@ -52,7 +51,6 @@ static class ServerUDP {
         while (true) {
             // TODO:[Receive and print DNSLookup]
             Message dnsLookUpMessage = ReceiveMessageFromClient(clientEndPoint);
-            Console.WriteLine($"Received lookup message: {dnsLookUpMessage}");
             
             if (dnsLookUpMessage.MsgType == MessageType.DNSLookup) {
                 // TODO:[Query the DNSRecord in Json file]
@@ -73,7 +71,6 @@ static class ServerUDP {
 
                 // TODO:[Receive Ack about correct DNSLookupReply from the client]
                 Message ackMessage = ReceiveMessageFromClient(clientEndPoint);
-                Console.WriteLine($"Received ack message: {ackMessage}");
             }
         }
         // TODO:[If end is received from client, stop connection]
@@ -87,10 +84,16 @@ static class ServerUDP {
             byte[] messageBytes = Encoding.UTF8.GetBytes(jsonMessage);
             // Send the bytes to the client
             serverSocket.SendTo(messageBytes, clientEndPoint);
-            Console.WriteLine($"Sent message: {message}");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write($"Sent message: ");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(message);
             Console.WriteLine();
         } catch (Exception ex) {
-            Console.WriteLine($"Error sending message: {ex.Message}");
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Write($"Error sending message: ");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(ex.Message);
             Console.WriteLine();
         }
     }
@@ -103,6 +106,11 @@ static class ServerUDP {
         string jsonMessage = Encoding.UTF8.GetString(buffer, 0, bytesReceived);
         // Convert JSON string to Message object
         Message message = JsonSerializer.Deserialize<Message>(jsonMessage);
+        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.Write($"Received message: ");
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine(message);
+        Console.WriteLine();
         return message;
     }
 }
