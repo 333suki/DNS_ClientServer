@@ -84,7 +84,7 @@ static class ServerUDP {
             byte[] messageBytes = Encoding.UTF8.GetBytes(jsonMessage);
             // Send the bytes to the client
             serverSocket.SendTo(messageBytes, clientEndPoint);
-            Console.ForegroundColor = ConsoleColor.Green;
+            Console.ForegroundColor = ConsoleColor.Blue;
             Console.Write($"Sent message: ");
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine(message);
@@ -106,7 +106,7 @@ static class ServerUDP {
         string jsonMessage = Encoding.UTF8.GetString(buffer, 0, bytesReceived);
         // Convert JSON string to Message object
         Message message = JsonSerializer.Deserialize<Message>(jsonMessage);
-        Console.ForegroundColor = ConsoleColor.Blue;
+        Console.ForegroundColor = ConsoleColor.Green;
         Console.Write($"Received message: ");
         Console.ForegroundColor = ConsoleColor.White;
         Console.WriteLine(message);

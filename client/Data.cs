@@ -33,7 +33,7 @@ namespace LibData {
         public int? Priority { get; set; } // Nullable for non-MX records
 
         public override string ToString() {
-            return $"Type: {Type}, Name: {Name}, Value: {Value}, TTL: {TTL}, Priority: {Priority}";
+            return $"Type: {Type}, Name: {Name}, Value: {Value}, TTL: {TTL}, Priority: {(Priority is null ? "null" : Priority)}";
         }
     }
 }

@@ -43,8 +43,7 @@ static class ClientUDP {
         SendMessageToServer(new Message { MsgId = 1, MsgType = MessageType.Hello, Content = "Hello from client!!!" }, serverEndPoint);
 
         //TODO: [Receive and print Welcome from server]
-        Message welcomeMessage = ReceiveMessageFromServer(serverEndPoint);
-        Console.WriteLine($"Received message: {welcomeMessage}");
+        ReceiveMessageFromServer(serverEndPoint);
 
         // TODO: [Create and send DNSLookup Message]
         //string[] records = { "example.com"};
@@ -54,7 +53,6 @@ static class ClientUDP {
         {
             SendMessageToServer(new Message { MsgId = 33+i, MsgType = MessageType.DNSLookup, Content = records[i] }, serverEndPoint);
             Message DNSLookupReply = ReceiveMessageFromServer(serverEndPoint);
-            Console.WriteLine(DNSLookupReply);
 
             if (DNSLookupReply is not null)
             {
@@ -87,16 +85,21 @@ static class ClientUDP {
             byte[] messageBytes = Encoding.UTF8.GetBytes(jsonMessage);
             // Send the bytes to the server
             clientSocket.SendTo(messageBytes, serverEndPoint);
-            Console.WriteLine($"Sent message: {message.MsgId}, {message.MsgType}, {message.Content}");
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"Error sending message: {ex.Message}");
+            Console.ForegroundColor = ConsoleColor.Blue;
+            Console.Write($"Sent message: ");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(message);
+            Console.WriteLine();
+        } catch (Exception ex) {
+            Console.ForegroundColor = ConsoleColor.Red;
+            Console.Write($"Error sending message: ");
+            Console.ForegroundColor = ConsoleColor.White;
+            Console.WriteLine(ex.Message);
+            Console.WriteLine();
         }
     }
 
-    private static Message ReceiveMessageFromServer(EndPoint serverEndPoint)
-    {
+    private static Message ReceiveMessageFromServer(EndPoint serverEndPoint) {
         byte[] buffer = new byte[1024];
         // Put received bytes in the buffer
         int bytesReceived = clientSocket.ReceiveFrom(buffer, ref serverEndPoint);
@@ -104,6 +107,24 @@ static class ClientUDP {
         string jsonMessage = Encoding.UTF8.GetString(buffer, 0, bytesReceived);
         // Convert JSON string to Message object
         Message message = JsonSerializer.Deserialize<Message>(jsonMessage);
+        
+        using (JsonDocument doc = JsonDocument.Parse(jsonMessage)) {
+            if (doc.RootElement.TryGetProperty("Content", out JsonElement contentElement)) {
+                try {
+                    string contentJson = contentElement.GetRawText();
+                    message.Content = JsonSerializer.Deserialize<DNSRecord>(contentJson);
+                }
+                catch (Exception e) {
+                    
+                }
+            }
+        }
+        
+        Console.ForegroundColor = ConsoleColor.Green;
+        Console.Write($"Received message: ");
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine(message);
+        Console.WriteLine();
         return message;
     }
 }
