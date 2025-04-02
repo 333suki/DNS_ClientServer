@@ -57,11 +57,13 @@ static class ServerUDP {
                 // TODO:[Query the DNSRecord in Json file]
                 bool found = false;
                 foreach (DNSRecord record in records) {
-                    if (String.Compare(record.Name.Trim(), dnsLookUpMessage.Content.ToString().Trim(), StringComparison.OrdinalIgnoreCase) == 0) {
-                        // TODO:[If found Send DNSLookupReply containing the DNSRecord]
-                        found = true;
-                        SendMessageToClient(new Message { MsgId = dnsLookUpMessage.MsgId, MsgType = MessageType.DNSLookupReply, Content = new DNSRecord { Type = record.Type, Name = record.Name, Value = record.Value, TTL = record.TTL, Priority = record.Priority } }, clientEndPoint);
-                        break;
+                    if (dnsLookUpMessage.Content is DNSRecord dnsRecord) {
+                        if (String.Compare(record.Type.Trim(), dnsRecord.Type.Trim(), StringComparison.OrdinalIgnoreCase) == 0 && String.Compare(record.Name.Trim(), dnsRecord.Name.Trim(), StringComparison.OrdinalIgnoreCase) == 0) {
+                            // TODO:[If found Send DNSLookupReply containing the DNSRecord]
+                            found = true;
+                            SendMessageToClient(new Message { MsgId = dnsLookUpMessage.MsgId, MsgType = MessageType.DNSLookupReply, Content = new DNSRecord { Type = record.Type, Name = record.Name, Value = record.Value, TTL = record.TTL, Priority = record.Priority } }, clientEndPoint);
+                            break;
+                        }
                     }
                 }
 
@@ -86,7 +88,7 @@ static class ServerUDP {
             // Send the bytes to the client
             serverSocket.SendTo(messageBytes, clientEndPoint);
             Console.ForegroundColor = ConsoleColor.Blue;
-            Console.Write($"Sent message: ");
+            Console.Write($"Sent message: ");   
             Console.ForegroundColor = ConsoleColor.White;
             Console.WriteLine(message);
             Console.WriteLine();
@@ -107,6 +109,17 @@ static class ServerUDP {
         string jsonMessage = Encoding.UTF8.GetString(buffer, 0, bytesReceived);
         // Convert JSON string to Message object
         Message message = JsonSerializer.Deserialize<Message>(jsonMessage);
+
+        using (JsonDocument doc = JsonDocument.Parse(jsonMessage)) {
+            if (doc.RootElement.TryGetProperty("Content", out JsonElement contentElement)) {
+                try {
+                    string contentJson = contentElement.GetRawText();
+                    message.Content = JsonSerializer.Deserialize<DNSRecord>(contentJson);
+                }
+                catch (Exception e) { }
+            }
+        }
+        
         Console.ForegroundColor = ConsoleColor.Green;
         Console.Write($"Received message: ");
         Console.ForegroundColor = ConsoleColor.White;

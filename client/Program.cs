@@ -48,10 +48,11 @@ static class ClientUDP {
         // TODO: [Create and send DNSLookup Message]
         //string[] records = { "example.com"};
 
-        string[] records = { "www.customdomain.com", "example.com", "www.funny_cat.com", "https://visdeurbel.nl/" };
+        (string type, string name)[] records = { ("A", "www.customdomain.com"), ("MX", "example.com"), ("CNAME", "www.funny_cat.com"), ("TXT", "https://visdeurbel.nl/") };
+        // (string type, string name)[] records = { ("A", "www.customdomain.com") };
         for (int i = 0; i < records.Length; i++)
         {
-            SendMessageToServer(new Message { MsgId = 33+i, MsgType = MessageType.DNSLookup, Content = records[i] }, serverEndPoint);
+            SendMessageToServer(new Message { MsgId = 33+i, MsgType = MessageType.DNSLookup, Content = new DNSRecord { Type = records[i].type, Name = records[i].name, Value = null, TTL = null, Priority = null } }, serverEndPoint);
             Message DNSLookupReply = ReceiveMessageFromServer(serverEndPoint);
 
             if (DNSLookupReply is not null)
