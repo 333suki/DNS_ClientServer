@@ -24,11 +24,8 @@ public class Setting {
 }
 
 static class ClientUDP {
-
     //TODO: [Deserialize Setting.json]
-    static string configFile = @"Setting.json";
-    static string configContent = File.ReadAllText(configFile);
-    static Setting? setting = JsonSerializer.Deserialize<Setting>(configContent);
+    static Setting? setting = JsonSerializer.Deserialize<Setting>(File.ReadAllText(Path.Combine("Setting.json")));
     private static Socket clientSocket;
 
     public static void start() {
@@ -53,11 +50,11 @@ static class ClientUDP {
         for (int i = 0; i < records.Length; i++)
         {
             SendMessageToServer(new Message { MsgId = 33+i, MsgType = MessageType.DNSLookup, Content = new DNSRecord { Type = records[i].type, Name = records[i].name, Value = null, TTL = null, Priority = null } }, serverEndPoint);
-            Message DNSLookupReply = ReceiveMessageFromServer(serverEndPoint);
+            Message reply = ReceiveMessageFromServer(serverEndPoint);
 
-            if (DNSLookupReply is not null)
+            if (reply is not null && (reply.MsgType == MessageType.DNSLookupReply || reply.MsgType == MessageType.Error))
             {
-                SendMessageToServer(new Message { MsgId = 4112, MsgType = MessageType.Ack, Content = DNSLookupReply.MsgId }, serverEndPoint);
+                SendMessageToServer(new Message { MsgId = 4112, MsgType = MessageType.Ack, Content = reply.MsgId }, serverEndPoint);
             }
         }
 
@@ -120,8 +117,13 @@ static class ClientUDP {
                 }
             }
         }
-        
-        Console.ForegroundColor = ConsoleColor.Green;
+
+        if (message.MsgType == MessageType.Error) {
+            Console.ForegroundColor = ConsoleColor.Red;
+        }
+        else {
+            Console.ForegroundColor = ConsoleColor.Green;
+        }
         Console.Write($"Received message: ");
         Console.ForegroundColor = ConsoleColor.White;
         Console.WriteLine(message);
