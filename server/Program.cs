@@ -40,43 +40,60 @@ static class ServerUDP {
         Console.WriteLine($"Server is listening on {setting.ServerIPAddress}:{setting.ServerPortNumber}");
         Console.WriteLine();
 
-        // TODO:[Receive and print a received Message from the client]
         EndPoint clientEndPoint = new IPEndPoint(IPAddress.Parse(setting.ClientIPAddress), setting.ClientPortNumber);
-        
-        // TODO:[Receive and print Hello]
-        Message helloMessage = ReceiveMessageFromClient(clientEndPoint);
 
-        // TODO:[Send Welcome to the client]
-        SendMessageToClient(new Message{MsgId = 4, MsgType = MessageType.Welcome, Content = "Welcome from server!!!"}, clientEndPoint);
-        
-        while (true) {
-            // TODO:[Receive and print DNSLookup]
-            Message dnsLookUpMessage = ReceiveMessageFromClient(clientEndPoint);
-            
-            if (dnsLookUpMessage.MsgType == MessageType.DNSLookup) {
-                // TODO:[Query the DNSRecord in Json file]
-                bool found = false;
-                foreach (DNSRecord record in records) {
-                    if (dnsLookUpMessage.Content is DNSRecord dnsRecord) {
-                        if (String.Compare(record.Type.Trim(), dnsRecord.Type.Trim(), StringComparison.OrdinalIgnoreCase) == 0 && String.Compare(record.Name.Trim(), dnsRecord.Name.Trim(), StringComparison.OrdinalIgnoreCase) == 0) {
-                            // TODO:[If found Send DNSLookupReply containing the DNSRecord]
-                            found = true;
-                            SendMessageToClient(new Message { MsgId = dnsLookUpMessage.MsgId, MsgType = MessageType.DNSLookupReply, Content = new DNSRecord { Type = record.Type, Name = record.Name, Value = record.Value, TTL = record.TTL, Priority = record.Priority } }, clientEndPoint);
-                            break;
+        // TODO:[Receive and print a received Message from the client]
+
+        while (true) // keep the server running indefinitely 
+        {
+            // TODO:[Receive and print Hello]
+            Message helloMessage = ReceiveMessageFromClient(clientEndPoint);
+
+            // TODO:[Send Welcome to the client]
+            SendMessageToClient(new Message { MsgId = 4, MsgType = MessageType.Welcome, Content = "Welcome from server!!!" }, clientEndPoint);
+
+            while (true)
+            {
+                // TODO:[Receive and print DNSLookup]
+                Message dnsLookUpMessage = ReceiveMessageFromClient(clientEndPoint);
+
+                if (dnsLookUpMessage.MsgType == MessageType.DNSLookup)
+                {
+                    // TODO:[Query the DNSRecord in Json file]
+                    bool found = false;
+                    foreach (DNSRecord record in records)
+                    {
+                        if (dnsLookUpMessage.Content is DNSRecord dnsRecord)
+                        {
+                            if (String.Compare(record.Type.Trim(), dnsRecord.Type.Trim(), StringComparison.OrdinalIgnoreCase) == 0 && String.Compare(record.Name.Trim(), dnsRecord.Name.Trim(), StringComparison.OrdinalIgnoreCase) == 0)
+                            {
+                                // TODO:[If found Send DNSLookupReply containing the DNSRecord]
+                                found = true;
+                                SendMessageToClient(new Message { MsgId = dnsLookUpMessage.MsgId, MsgType = MessageType.DNSLookupReply, Content = new DNSRecord { Type = record.Type, Name = record.Name, Value = record.Value, TTL = record.TTL, Priority = record.Priority } }, clientEndPoint);
+                                break;
+                            }
                         }
                     }
+
+                    // TODO:[If not found Send Error]
+                    if (!found)
+                    {
+                        SendMessageToClient(new Message { MsgId = 753444, MsgType = MessageType.Error, Content = "Domain not found" }, clientEndPoint);
+                    }
+
+                    // TODO:[Receive Ack about correct DNSLookupReply from the client]
+                    Message ackMessage = ReceiveMessageFromClient(clientEndPoint);
                 }
 
-                // TODO:[If not found Send Error]
-                if (!found) {
-                    SendMessageToClient(new Message { MsgId = 753444, MsgType = MessageType.Error, Content = "Domain not found" }, clientEndPoint);
+                if (dnsLookUpMessage.MsgType == MessageType.End)
+                {
+                    Console.WriteLine("Client has disconnected.");
+                    Console.WriteLine();
                 }
-
-                // TODO:[Receive Ack about correct DNSLookupReply from the client]
-                Message ackMessage = ReceiveMessageFromClient(clientEndPoint);
             }
+            // TODO:[If end is received from client, stop connection]
         }
-        // TODO:[If end is received from client, stop connection]
+
     }
 
     private static void SendMessageToClient(Message message, EndPoint clientEndPoint) {
