@@ -9,7 +9,6 @@ using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using LibData;
 
-// SendTo();
 class Program {
     static void Main(string[] args) {
         ClientUDP.start();
@@ -35,7 +34,6 @@ static class ClientUDP {
         clientSocket.Bind(clientEndPoint);
         IPEndPoint serverEndPoint = new IPEndPoint(IPAddress.Parse(setting.ServerIPAddress), setting.ServerPortNumber);
         
-
         //TODO: [Create and send HELLO]
         SendMessageToServer(new Message { MsgId = 1, MsgType = MessageType.Hello, Content = "Hello from client!!!" }, serverEndPoint);
 
@@ -43,10 +41,7 @@ static class ClientUDP {
         ReceiveMessageFromServer(serverEndPoint);
 
         // TODO: [Create and send DNSLookup Message]
-        //string[] records = { "example.com"};
-
         (string type, string name)[] records = { ("A", "www.customdomain.com"), ("MX", "example.com"), ("CNAME", "www.funny_cat.com"), ("TXT", "https://visdeurbel.nl/") };
-        // (string type, string name)[] records = { ("A", "www.customdomain.com") };
         for (int i = 0; i < records.Length; i++)
         {
             SendMessageToServer(new Message { MsgId = 33+i, MsgType = MessageType.DNSLookup, Content = new DNSRecord { Type = records[i].type, Name = records[i].name, Value = null, TTL = null, Priority = null } }, serverEndPoint);
@@ -57,22 +52,11 @@ static class ClientUDP {
                 SendMessageToServer(new Message { MsgId = 4112, MsgType = MessageType.Ack, Content = reply.MsgId }, serverEndPoint);
             }
         }
-
-
-        //TODO: [Receive and print DNSLookupReply from server] DONE
-        //TODO: [Send Acknowledgment to Server] DONE
-
-
-        // TODO: [Send next DNSLookup to server]
-        // repeat the process until all DNSLoopkups (correct and incorrect onces) are sent to server and the replies with DNSLookupReply
-
-
+        
         //TODO: [Send End message to  server]
         SendMessageToServer(new Message { MsgId = 91377, MsgType = MessageType.End, Content = "No Lookups anymore" }, serverEndPoint);
     }
-
-
-
+    
     private static void SendMessageToServer(Message message, EndPoint serverEndPoint)
     {
         try
@@ -120,10 +104,10 @@ static class ClientUDP {
 
         if (message.MsgType == MessageType.Error) {
             Console.ForegroundColor = ConsoleColor.Red;
-        }
-        else {
+        } else {
             Console.ForegroundColor = ConsoleColor.Green;
         }
+        
         Console.Write($"Received message: ");
         Console.ForegroundColor = ConsoleColor.White;
         Console.WriteLine(message);

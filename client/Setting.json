@@ -1,0 +1,6 @@
+{
+    "ServerPortNumber": 25565,
+    "ServerIPAddress": "serverip",
+    "ClientPortNumber": 25566,
+    "ClientIPAddress": "clientip"
+}
